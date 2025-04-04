@@ -69,6 +69,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/user-register").permitAll()
+                        .requestMatchers("/api/users").hasRole("USER")
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
