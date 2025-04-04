@@ -1,7 +1,6 @@
 package com.conceptandcoding.learningspringboot.JWT.filters;
 
 import com.conceptandcoding.learningspringboot.JWT.token.JwtAuthenticationToken;
-import com.conceptandcoding.learningspringboot.JWT.token.JwtRefreshAuthenticationToken;
 import com.conceptandcoding.learningspringboot.JWT.util.JWTUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -34,24 +33,16 @@ public class JWTRefreshFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-
         String refreshToken = extractJwtFromRequest(request);
-
         if (refreshToken == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
-
-        JwtAuthenticationToken authRequest = new JwtAuthenticationToken(refreshToken);
-        Authentication authResult = authenticationManager.authenticate(authRequest);
-
+        JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(refreshToken);
+        Authentication authResult = authenticationManager.authenticate(authenticationToken);
         if(authResult.isAuthenticated()) {
             String newToken = jwtUtil.generateToken(authResult.getName(), 15); //15min
             response.setHeader("Authorization", "Bearer " + newToken);
-        }
-        else {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
         }
     }
 
@@ -60,7 +51,6 @@ public class JWTRefreshFilter extends OncePerRequestFilter {
         if (cookies == null) {
             return null;
         }
-
         String refreshToken = null;
         for (Cookie cookie : cookies) {
             if ("refreshToken".equals(cookie.getName())) {
