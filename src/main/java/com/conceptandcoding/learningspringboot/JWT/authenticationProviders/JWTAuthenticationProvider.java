@@ -38,3 +38,5 @@ public class JWTAuthenticationProvider implements AuthenticationProvider {
         return JwtAuthenticationToken.class.isAssignableFrom(authentication);
     }
 }
+
+

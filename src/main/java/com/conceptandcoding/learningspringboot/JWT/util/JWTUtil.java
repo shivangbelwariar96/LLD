@@ -13,7 +13,7 @@ import java.util.Date;
 @Component
 public class JWTUtil {
 
-    private static final String SECRET_KEY = "your-very-secure-secret-key-32bytes";
+    private static final String SECRET_KEY = "your-secure-secret-key-min-32bytes";
     private static final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
 
 
@@ -40,3 +40,5 @@ public class JWTUtil {
         }
     }
 }
+
+
