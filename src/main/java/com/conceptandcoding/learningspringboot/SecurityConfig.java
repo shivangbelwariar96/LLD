@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.util.Arrays;
 
@@ -67,13 +68,12 @@ public class SecurityConfig {
         JWTRefreshFilter jwtRefreshFilter = new JWTRefreshFilter(jwtUtil, authenticationManager);
 
         http.authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/register", "/h2-console/**").permitAll()
+                        .requestMatchers("/api/user-register").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable())) // Allow Frames for H2
                 .csrf(csrf -> csrf.disable())
-                .addFilter(jwtAuthFilter)  // generate token filter
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class) // generate token filter
                 .addFilterAfter(jwtValidationFilter, JWTAuthenticationFilter.class) // validate token filter
                 .addFilterAfter(jwtRefreshFilter, JwtValidationFilter.class); // refresh token filter
         return http.build();
@@ -86,8 +86,5 @@ public class SecurityConfig {
                 jwtAuthenticationProvider()
         ));
     }
-
 }
-
-
 
